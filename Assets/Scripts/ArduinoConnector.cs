@@ -1,80 +1,73 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
-using System.Collections;
 using System.IO.Ports;
 
-public class ArduinoConnector : MonoBehaviour
+public class ArduinoConnector : ArduinoBase
 {
+    public static readonly int SOUND_LENGTH = 300;
 
-    SerialPort stream = new SerialPort("COM3", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
-
-    //properties from arduino
-    private int light = 0;
-    public int Light { get { return light; } }
-    private int distance = 0;
-    public int Distance { get { return distance; } }
-
-    private int life = 0;
-    public int Life { set { life = value; } }
-
-    private int soundlength = 300;
-    private int sounddelay = 0;
+    private SerialPort _stream = new SerialPort("COM3", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
+    private int _soundDelay = 0;
 
 
-    void Start()
+    private void Start()
     {
-        this.OpenStream();
-        stream.ReadTimeout = 400;
+        try
+        {
+            OpenStream();
+        } catch(System.IO.IOException)
+        {
+            Debug.LogError("Could not open arduino-stream.");
+        }
+        _stream.ReadTimeout = 400;
     }
 
-    void Update()
+    private void Update()
     {
-        //photoresistor
-        string value = stream.ReadLine(); //Read the information
+        if (!_stream.IsOpen)
+            return;
+
+        /* Receiving */
+        string value = _stream.ReadLine(); //Read the information
         string[] values = value.Split(' ');
 
-        if (Int32.TryParse(values[0], out light))
+        if (Int32.TryParse(values[0], out _brightness))
         {
-            Debug.Log("light: " + light);
-            
+            Debug.Log("light: " + _brightness);
         }
 
-        if (Int32.TryParse(values[1], out distance))
+        if (Int32.TryParse(values[1], out _distance))
         {
-            Debug.Log("distance: " + distance);
+            Debug.Log("distance: " + _distance);
         }
 
-        if (sounddelay > 0)
+        /* Sending */
+        if (_soundDelay > 0)
         {
-            stream.Write("c");
-            sounddelay--;
+            _stream.Write("c");
+            _soundDelay--;
         }
-
-
-
     }
 
-    void OpenStream()
+    private void OpenStream()
     {
-        if(stream != null && !stream.IsOpen)
+        if(_stream != null && !_stream.IsOpen)
         {
-            stream.Open(); //Open the Serial Stream.
+            _stream.Open(); //Open the Serial Stream.
         }
        
     }
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
-        if (stream != null && stream.IsOpen)
+        if (_stream != null && _stream.IsOpen)
         {
-            stream.Close(); //Close the Serial Stream.
+            _stream.Close(); //Close the Serial Stream.
         }
     }
 
-    void PlaySound()
+    public override void PlaySound()
     {
-        sounddelay = soundlength;
+        _soundDelay = SOUND_LENGTH;
     }
-
 }
