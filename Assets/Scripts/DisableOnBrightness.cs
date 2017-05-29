@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DisableOnBrightness : MonoBehaviour {
 
-    public static readonly int BRIGHTNESS_SWITCH_VALUE = 150;
+    public static readonly int BRIGHTNESS_SWITCH_VALUE = 300;
 
 	public enum TYPE { DISABLE_WHEN_BRIGHT, DISABLE_WHEN_DARK };
 
@@ -23,11 +23,11 @@ public class DisableOnBrightness : MonoBehaviour {
         switch (type)
         {
             case TYPE.DISABLE_WHEN_BRIGHT:
-                if (brightness < BRIGHTNESS_SWITCH_VALUE)
+                if (brightness >= BRIGHTNESS_SWITCH_VALUE)
                     isEnabled = true;
                 break;
             case TYPE.DISABLE_WHEN_DARK:
-                if (brightness >= BRIGHTNESS_SWITCH_VALUE)
+                if (brightness < BRIGHTNESS_SWITCH_VALUE)
                     isEnabled = true;
                 break;
         }

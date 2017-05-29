@@ -13,6 +13,10 @@ public abstract class ArduinoBase : MonoBehaviour {
     protected int _digits = 0;
     public int Digits { set { _digits = value; } }
 
+    protected bool _gameover = false;
+    public bool Gameover { set { _gameover = value; } }
 
     public abstract void PlaySound();
+
+    public abstract void GameOver();
 }

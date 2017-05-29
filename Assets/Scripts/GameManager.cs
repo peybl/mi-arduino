@@ -14,8 +14,8 @@ public class GameManager : SingletonBase<GameManager> {
 
 
     private void Start () {
-        _arduino = gameObject.AddComponent<ArduinoMock>();
-        //arduino = gameObject.AddComponent<ArduinoConnector>();
+        //_arduino = gameObject.AddComponent<ArduinoMock>();
+        _arduino = gameObject.AddComponent<ArduinoConnector>();
 
         // Get Screen values
         Vector2 topRightCorner = new Vector2(1, 1);
@@ -42,6 +42,8 @@ public class GameManager : SingletonBase<GameManager> {
 
     public void EndGame()
     {
+        _arduino.GameOver();
+        _arduino.Digits = ScoringManager.Instance.Score;
         ScoringManager.Instance.StopScoringSystem();
         SceneManager.Instance.StopObstracleSpawner();
         UIManager.Instance.ShowGameOverText();

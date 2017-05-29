@@ -35,4 +35,9 @@ public class ArduinoMock : ArduinoBase {
     {
         Debug.Log("PLAY SOUND");
     }
+
+    public override void GameOver()
+    {
+        Debug.Log("Game Over");
+    }
 }

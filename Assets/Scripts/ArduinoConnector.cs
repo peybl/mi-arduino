@@ -4,10 +4,14 @@ using System.IO.Ports;
 
 public class ArduinoConnector : ArduinoBase
 {
-    public static readonly int SOUND_LENGTH = 300;
+    public static readonly int SOUND_LENGTH = 5;
 
-    private SerialPort _stream = new SerialPort("COM3", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
+    private SerialPort _stream = new SerialPort("COM4", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
     private int _soundDelay = 0;
+
+    private String SOUND = "a";
+    private String GAMEOVER = "b";
+    private String RESTART = "c";
 
 
     private void Start()
@@ -15,11 +19,12 @@ public class ArduinoConnector : ArduinoBase
         try
         {
             OpenStream();
+            _stream.Write(RESTART);
         } catch(System.IO.IOException)
         {
             Debug.LogError("Could not open arduino-stream.");
         }
-        _stream.ReadTimeout = 400;
+        _stream.ReadTimeout = 300;
     }
 
     private void Update()
@@ -27,25 +32,32 @@ public class ArduinoConnector : ArduinoBase
         if (!_stream.IsOpen)
             return;
 
-        /* Receiving */
-        string value = _stream.ReadLine(); //Read the information
+            /* Receiving */
+            string value = _stream.ReadLine(); //Read the information
         string[] values = value.Split(' ');
 
-        if (Int32.TryParse(values[0], out _brightness))
+        if (values.Length == 2)//check if arguments are send right
         {
-            Debug.Log("light: " + _brightness);
-        }
+            if (Int32.TryParse(values[0], out _brightness))
+            {
+                //Debug.Log("light: " + _brightness);
+            }
 
-        if (Int32.TryParse(values[1], out _distance))
-        {
-            Debug.Log("distance: " + _distance);
+            if (Int32.TryParse(values[1], out _distance))
+            {
+                //Debug.Log("distance: " + _distance);
+            }
         }
 
         /* Sending */
         if (_soundDelay > 0)
         {
-            _stream.Write("c");
+            _stream.Write(SOUND);
             _soundDelay--;
+        }
+        if (_gameover && _soundDelay == 0) {
+            //Debug.Log(_digits);
+            _stream.Write(GAMEOVER);
         }
     }
 
@@ -69,5 +81,11 @@ public class ArduinoConnector : ArduinoBase
     public override void PlaySound()
     {
         _soundDelay = SOUND_LENGTH;
+    }
+
+    public override void GameOver()
+    {
+        _gameover = true;
+        this.PlaySound();
     }
 }
