@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VerticalUserMovement : MonoBehaviour {
-
+public class VerticalUserMovement : MonoBehaviour
+{
     public static readonly int DISTANCE_MIN = 5;    // Top position
     public static readonly int DISTANCE_MAX = 20;   // Bottom position
 
     
-	private void FixedUpdate () {
-        // TODO include delta time and make movemente dynamic!
-
+	private void FixedUpdate()
+    {
         // Get arduino vertical input and clip to range
         int dist = GameManager.Instance.Arduino.Distance;
         dist = dist < DISTANCE_MIN ? DISTANCE_MIN : dist;

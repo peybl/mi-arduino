@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : SingletonBase<UIManager> {
-
+public class UIManager : SingletonBase<UIManager>
+{
     public static readonly int GAME_STARTS_IN_TIME = 4;
 
     public Text gameStartsInText;
@@ -17,7 +17,8 @@ public class UIManager : SingletonBase<UIManager> {
     public bool DebugMode { get { return _debugMode; } set { _debugMode = value; } }
 
 
-    private void Start () {
+    private void Start ()
+    {
         if (gameStartsInText != null)
             gameStartsInText.enabled = false;   // Just to make sure its hidden
         else
@@ -55,7 +56,7 @@ public class UIManager : SingletonBase<UIManager> {
         brightnessImg.enabled = true;
         scoreText.enabled = true;
 
-        if (GameManager.Instance.Arduino.Brightness < DisableOnBrightness.BRIGHTNESS_SWITCH_VALUE)
+        if (GameManager.Instance.Arduino.Brightness < OnBrightnessBase.BRIGHTNESS_SWITCH_VALUE)
             brightnessImg.color = Color.white;
         else
             brightnessImg.color = Color.black;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoringManager : SingletonBase<ScoringManager> {
-
+public class ScoringManager : SingletonBase<ScoringManager>
+{
     private int _score = 0;
     public int Score { get { return _score; } }
 

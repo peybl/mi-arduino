@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ArduinoBase : MonoBehaviour {
-
+public abstract class ArduinoBase : MonoBehaviour
+{
     protected int _brightness = 0;
     public int Brightness { get { return _brightness; } }
 
@@ -14,7 +14,6 @@ public abstract class ArduinoBase : MonoBehaviour {
     public int Digits { set { _digits = value; } }
 
     protected bool _gameover = false;
-    public bool Gameover { set { _gameover = value; } }
 
     public abstract void PlaySound();
 

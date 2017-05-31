@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArduinoMock : ArduinoBase {
-
+public class ArduinoMock : ArduinoBase
+{
     public static readonly int BRIGHTNESS_MAX = 300;
 
 
@@ -14,7 +14,7 @@ public class ArduinoMock : ArduinoBase {
         _brightness = BRIGHTNESS_MAX;
     }
     
-    private void Update () {
+    private void Update() {
 		if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             _distance++;

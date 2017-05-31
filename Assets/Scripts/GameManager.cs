@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : SingletonBase<GameManager> {
+public class GameManager : SingletonBase<GameManager>
+{
+    public static readonly bool DEBUG_MODE = false;
 
     private ArduinoBase _arduino;
     public ArduinoBase Arduino { get { return _arduino; } }
@@ -13,9 +15,10 @@ public class GameManager : SingletonBase<GameManager> {
     public enum SCREEN_AXIS { X, Y };
 
 
-    private void Start () {
-        //_arduino = gameObject.AddComponent<ArduinoMock>();
-        _arduino = gameObject.AddComponent<ArduinoConnector>();
+    private void Start ()
+    {
+        _arduino = gameObject.AddComponent<ArduinoMock>();
+        //_arduino = gameObject.AddComponent<ArduinoConnector>();
 
         // Get Screen values
         Vector2 topRightCorner = new Vector2(1, 1);
@@ -24,11 +27,8 @@ public class GameManager : SingletonBase<GameManager> {
         _screenWidth = edgeVector.x * 2;
 
         // Init ui
-        UIManager.Instance.DebugMode = true;    // TODO remove in production
+        UIManager.Instance.DebugMode = DEBUG_MODE;
         UIManager.Instance.PlayGameStartsAnimation(StartGame);
-
-        // Create player object
-        SceneManager.Instance.SpawnPlayer();
     }
 
     /// <summary>
@@ -40,6 +40,9 @@ public class GameManager : SingletonBase<GameManager> {
         ScoringManager.Instance.StartScoringSystem();
     }
 
+    /// <summary>
+    /// Finishes the current game.
+    /// </summary>
     public void EndGame()
     {
         _arduino.GameOver();

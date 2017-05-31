@@ -5,13 +5,12 @@ using System.IO.Ports;
 public class ArduinoConnector : ArduinoBase
 {
     public static readonly int SOUND_LENGTH = 5;
+    private static readonly String SOUND = "a";
+    private static readonly String GAMEOVER = "b";
+    private static readonly String RESTART = "c";
 
     private SerialPort _stream = new SerialPort("COM4", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
     private int _soundDelay = 0;
-
-    private String SOUND = "a";
-    private String GAMEOVER = "b";
-    private String RESTART = "c";
 
 
     private void Start()
@@ -32,8 +31,8 @@ public class ArduinoConnector : ArduinoBase
         if (!_stream.IsOpen)
             return;
 
-            /* Receiving */
-            string value = _stream.ReadLine(); //Read the information
+        /* Receiving */
+        string value = _stream.ReadLine(); //Read the information
         string[] values = value.Split(' ');
 
         if (values.Length == 2)//check if arguments are send right

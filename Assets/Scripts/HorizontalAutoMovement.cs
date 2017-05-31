@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HorizontalAutoMovement : MonoBehaviour {
+public class HorizontalAutoMovement : MonoBehaviour
+{
+    public static readonly int SPEED = 4;
 
-    public int speed = 4;
-
-    private void FixedUpdate () {
-        float dist = speed * Time.fixedDeltaTime;
+    private void FixedUpdate() {
+        float dist = SPEED * Time.fixedDeltaTime;
         gameObject.transform.Translate(new Vector3(-dist, 0, 0));
 	}
 }
