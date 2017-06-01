@@ -4,7 +4,7 @@ using System.IO.Ports;
 
 public class ArduinoConnector : ArduinoBase
 {
-    public static readonly int SOUND_LENGTH = 5;
+    public static readonly int SOUND_LENGTH = 10;
     private static readonly String SOUND = "a";
     private static readonly String GAMEOVER = "b";
     private static readonly String RESTART = "c";
@@ -24,6 +24,7 @@ public class ArduinoConnector : ArduinoBase
             Debug.LogError("Could not open arduino-stream.");
         }
         _stream.ReadTimeout = 300;
+        _stream.WriteLine(RESTART);
     }
 
     private void Update()
@@ -57,6 +58,7 @@ public class ArduinoConnector : ArduinoBase
         if (_gameover && _soundDelay == 0) {
             //Debug.Log(_digits);
             _stream.Write(GAMEOVER);
+            _stream.Close();
         }
     }
 

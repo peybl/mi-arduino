@@ -1,4 +1,4 @@
-  //ultrasonic code from: https://www.tautvidas.com/blog/2012/08/distance-sensing-with-ultrasonic-sensor-and-arduino/
+//ultrasonic code from: https://www.tautvidas.com/blog/2012/08/distance-sensing-with-ultrasonic-sensor-and-arduino/
 //pins
 const int photoresistorPin = 0; //photoresistor
 const int echoPin = 2; //ultrasonic echo
@@ -13,6 +13,9 @@ const int dataPin = 13;     //74HC595 Pin 14
 int digitScan = 0; //for the current digit
 bool sound = false; //playing no sound
 bool gameover = false; //to check wenn to activate the segment display
+int starttime = 0;
+int endtime = 0;
+int score = 0;
 const byte digit[10] =      //seven segment digits in bits
 {
   B00111111, //0
@@ -30,8 +33,6 @@ const byte digit[10] =      //seven segment digits in bits
 int digitBuffer[4] = {
   0
 };
-
-String score = "";
 
 void setup()
 {
@@ -60,30 +61,41 @@ void loop()
     char receivedChar = Serial.read();
     if ('a' == receivedChar)
     {
-      buzz_crash();
+      crashSound();
     }
-    else if ('b' == receivedChar)
+    else if ('b' == receivedChar && !gameover)
     {
+      endtime = millis();
+      //-3 because of startsequence
+      score = ((endtime - starttime) / 1000)-6;
       gameover = true;
     }
-      else if ('c' == receivedChar)
+    else if ('c' == receivedChar)
     {
+      starttime = millis();
       gameover = false;
       resetDisplay();
     }
   }
-  //photoresistor
-  long photoresistor = analogRead(photoresistorPin); //read from photoresistor
-
-  long duration = 0, cm = 0;
 
   if (gameover) {
-    digitBuffer[3] = 3;
-    digitBuffer[2] = 2;
-    digitBuffer[1] = 1;
-    digitBuffer[0] = 0;
+    int tempscore = score;
+    digitBuffer[3] = tempscore % 10;
+    tempscore = tempscore / 10;
+    digitBuffer[2] = tempscore % 10;
+    tempscore = tempscore / 10;
+    digitBuffer[1] = tempscore % 10;
+    tempscore = tempscore / 10;
+    digitBuffer[0] = tempscore % 10;
     updateDisplay();
+
   } else {
+
+    //photoresistor
+    long photoresistor = analogRead(photoresistorPin); //read from photoresistor
+
+    long duration = 0, cm = 0;
+
     //ultrasonic sensor
     // establish variables for duration of the ping,
     // and the distance result in inches and centimeters:
@@ -96,41 +108,30 @@ void loop()
     delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
 
-
     // Read the signal from the sensor: a HIGH pulse whose
     // duration is the time (in microseconds) from the sending
     // of the ping to the reception of its echo off of an object.
 
     duration = pulseIn(echoPin, HIGH);
 
-    // convert the time into a distance
-    cm = microsecondsToCentimeters(duration);
-  }
+    // The speed of sound is 340 m/s or 29 microseconds per centimeter.
+    // The ping travels out and back, so to find the distance of the
+    // object we take half of the distance travelled.
+    cm = duration / 29 / 2;
 
-  Serial.println(String(photoresistor) + String(" ") + String(cm));
+    Serial.println(String(photoresistor) + String(" ") + String(cm));
 
-  if(!gameover){ //just for photosonic sensor
     delay(100);
   }
 
 }
 
-void buzz_crash()
+void crashSound()
 {
-  
-    digitalWrite(buzzerPin, HIGH);
-    delay(1);//wait for 1ms
-    digitalWrite(buzzerPin, LOW);
-    delay(1);//wait for 1ms
-
-}
-
-long microsecondsToCentimeters(long microseconds)
-{
-  // The speed of sound is 340 m/s or 29 microseconds per centimeter.
-  // The ping travels out and back, so to find the distance of the
-  // object we take half of the distance travelled.
-  return microseconds / 29 / 2;
+  digitalWrite(buzzerPin, HIGH);
+  delay(1);//wait for 1ms
+  digitalWrite(buzzerPin, LOW);
+  delay(1);//wait for 1ms
 }
 
 //writes the temperature on display
@@ -155,15 +156,16 @@ void updateDisplay() {
   if (digitScan > 3) digitScan = 0;
 }
 
-void resetDisplay(){
-    digitBuffer[3] = 0;
-    updateDisplay();
-    digitBuffer[2] = 0;
-    updateDisplay();
+void resetDisplay() {
+  digitScan = 0;
+  digitBuffer[0] = 0;
+  updateDisplay();
     digitBuffer[1] = 0;
-    updateDisplay();
-    digitBuffer[0] = 0;
-    updateDisplay();
+  updateDisplay();
+    digitBuffer[2] = 0;
+  updateDisplay();
+    digitBuffer[3] = 0;
+  updateDisplay();
 }
 
 

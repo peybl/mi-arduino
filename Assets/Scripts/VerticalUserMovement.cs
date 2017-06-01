@@ -7,6 +7,12 @@ public class VerticalUserMovement : MonoBehaviour
     public static readonly int DISTANCE_MIN = 5;    // Top position
     public static readonly int DISTANCE_MAX = 20;   // Bottom position
 
+    private float[] yPosition;
+
+    private void Start()
+    {
+        yPosition = new float[5];
+    }
     
 	private void FixedUpdate()
     {
@@ -19,10 +25,23 @@ public class VerticalUserMovement : MonoBehaviour
         dist -= DISTANCE_MIN;
         float percentage = dist > 0 ? 100.0f / (DISTANCE_MAX - DISTANCE_MIN) * dist : 0;    // e.g. 33.3
         percentage /= 100;  // e.g. 0.333
-        
+        percentage = 1- percentage; //to turn the photosonic sensor upside down
+
         // Set y position of object
         Vector3 pos = gameObject.transform.position;
-        pos.y = GameManager.Instance.CalcPercentageOfScreen(GameManager.SCREEN_AXIS.Y, percentage);
+
+        pos.y = smoothTransition(GameManager.Instance.CalcPercentageOfScreen(GameManager.SCREEN_AXIS.Y, percentage));
         gameObject.transform.position = pos;
+    }
+
+    private float smoothTransition(float currentYPosition)
+    {
+        yPosition[4] = yPosition[3];
+        yPosition[3] = yPosition[2];
+        yPosition[2] = yPosition[1];
+        yPosition[1] = yPosition[0];
+        yPosition[0] = currentYPosition;
+
+        return (yPosition[0] + yPosition[1] + yPosition[2] + yPosition[3] + yPosition[4]) /5;
     }
 }
