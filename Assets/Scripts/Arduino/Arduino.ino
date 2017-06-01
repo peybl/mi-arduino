@@ -1,3 +1,4 @@
+//Schematics for the display: http://www.instructables.com/id/Temperature-Displayed-on-4-Digit-7-segment-common/
 //ultrasonic code from: https://www.tautvidas.com/blog/2012/08/distance-sensing-with-ultrasonic-sensor-and-arduino/
 //pins
 const int photoresistorPin = 0; //photoresistor
@@ -13,9 +14,15 @@ const int dataPin = 13;     //74HC595 Pin 14
 int digitScan = 0; //for the current digit
 bool sound = false; //playing no sound
 bool gameover = false; //to check wenn to activate the segment display
-unsigned long starttime = 0;
-unsigned long endtime = 0;
-int score = 0;
+unsigned long starttime = 0;//for measureing the score
+unsigned long endtime = 0;//for measureing the score
+int score = 0;//for measureing the score
+
+//init the 4 digits on the diplay
+int digitBuffer[4] = {
+  0
+};
+//the 10 possabilities, which each digit can display
 const byte digit[10] =      //seven segment digits in bits
 {
   B00111111, //0
@@ -30,15 +37,14 @@ const byte digit[10] =      //seven segment digits in bits
   B01101111  //9
 };
 
-int digitBuffer[4] = {
-  0
-};
+
 
 void setup()
 {
   Serial.begin(9600);
-  pinMode(photoresistorPin, INPUT); //photoresistor
-  pinMode(buzzerPin, OUTPUT); //initialize the buzzer pin as an output
+  //init all pins
+  pinMode(photoresistorPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   for (int i = 0; i < 4; i++)
@@ -59,18 +65,18 @@ void loop()
   if (Serial.available() > 0) {
     // read the incoming byte:
     char receivedChar = Serial.read();
-    if ('a' == receivedChar)
+    if ('a' == receivedChar)//unity sends a, to make a crashing sound
     {
-      crashSound();
+      playCrashSound();
     }
-    else if ('b' == receivedChar && !gameover)
+    else if ('b' == receivedChar && !gameover)//unity sends b, when sound is over and score needs to be displayed
     {
       endtime = millis();
       //-3 because of startsequence
-      score = ((endtime/1000 - starttime/ 1000))-6;
+      score = ((endtime / 1000 - starttime / 1000)) - 6;
       gameover = true;
     }
-    else if ('c' == receivedChar)
+    else if ('c' == receivedChar)//unity sends c, when game is started
     {
       starttime = millis();
       gameover = false;
@@ -78,7 +84,21 @@ void loop()
     }
   }
 
-  if (gameover) {
+  if (!gameover) {
+    //calculate light intensity on photoresistor
+    long light = analogRead(photoresistorPin); //read from photoresistor
+
+    //calculate the distance between hand and ultrasonic sensor
+    long distance = measureDistance();
+
+    //send values to unity
+    Serial.println(String(light) + String(" ") + String(distance));
+
+    //delay for better performance
+    delay(100);
+
+  } else {
+    //display score in loop - each digit per iteration
     int tempscore = score;
     digitBuffer[3] = tempscore % 10;
     tempscore = tempscore / 10;
@@ -88,45 +108,12 @@ void loop()
     tempscore = tempscore / 10;
     digitBuffer[0] = tempscore % 10;
     updateDisplay();
-
-  } else {
-
-    //photoresistor
-    long photoresistor = analogRead(photoresistorPin); //read from photoresistor
-
-    long duration = 0, cm = 0;
-
-    //ultrasonic sensor
-    // establish variables for duration of the ping,
-    // and the distance result in inches and centimeters:
-    // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
-    // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-
-    // Read the signal from the sensor: a HIGH pulse whose
-    // duration is the time (in microseconds) from the sending
-    // of the ping to the reception of its echo off of an object.
-
-    duration = pulseIn(echoPin, HIGH);
-
-    // The speed of sound is 340 m/s or 29 microseconds per centimeter.
-    // The ping travels out and back, so to find the distance of the
-    // object we take half of the distance travelled.
-    cm = duration / 29 / 2;
-
-    Serial.println(String(photoresistor) + String(" ") + String(cm));
-
-    delay(100);
   }
 
 }
 
-void crashSound()
+//makes a small buzzering sound, when game is over
+void playCrashSound()
 {
   digitalWrite(buzzerPin, HIGH);
   delay(1);//wait for 1ms
@@ -134,7 +121,7 @@ void crashSound()
   delay(1);//wait for 1ms
 }
 
-//writes the temperature on display
+//writes the score on display
 void updateDisplay() {
   for (byte j = 0; j < 4; j++) {
     digitalWrite(digitPins[j], HIGH); // Turns the display off. Changed to HIGH
@@ -156,16 +143,39 @@ void updateDisplay() {
   if (digitScan > 3) digitScan = 0;
 }
 
+//resetting display when game starts
 void resetDisplay() {
-  digitScan = 0;
+  digitScan = 3;
   digitBuffer[0] = 0;
   updateDisplay();
-  digitBuffer[1] = 0;
-  updateDisplay();
-  digitBuffer[2] = 0;
-  updateDisplay();
-  digitBuffer[3] = 0;
-  updateDisplay();
+}
+
+//measures distances between hand and ultrasonic sensor
+long measureDistance() {
+  long duration = 0, cm = 0;
+
+  //ultrasonic sensor
+  // establish variables for duration of the ping,
+  // and the distance result in inches and centimeters:
+  // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+  // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // Read the signal from the sensor: a HIGH pulse whose
+  // duration is the time (in microseconds) from the sending
+  // of the ping to the reception of its echo off of an object.
+
+  duration = pulseIn(echoPin, HIGH);
+
+  // The speed of sound is 340 m/s or 29 microseconds per centimeter.
+  // The ping travels out and back, so to find the distance of the
+  // object we take half of the distance travelled.
+  return duration / 29 / 2;
 }
 
 
