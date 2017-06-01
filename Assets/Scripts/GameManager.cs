@@ -45,11 +45,11 @@ public class GameManager : SingletonBase<GameManager>
     /// </summary>
     public void EndGame()
     {
-        _arduino.GameOver();
         _arduino.Digits = ScoringManager.Instance.Score;
         ScoringManager.Instance.StopScoringSystem();
         SceneManager.Instance.StopObstracleSpawner();
         UIManager.Instance.ShowGameOverText();
+        _arduino.GameOver();
     }
 
     /// <summary>

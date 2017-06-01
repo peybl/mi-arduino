@@ -34,8 +34,9 @@ public class ArduinoConnector : ArduinoBase
 
         /* Receiving */
         string value = _stream.ReadLine(); //Read the information
+        //Debug.Log(value + "");
         string[] values = value.Split(' ');
-
+        
         if (values.Length == 2)//check if arguments are send right
         {
             if (Int32.TryParse(values[0], out _brightness))
@@ -47,6 +48,7 @@ public class ArduinoConnector : ArduinoBase
             {
                 //Debug.Log("distance: " + _distance);
             }
+
         }
 
         /* Sending */
@@ -56,9 +58,8 @@ public class ArduinoConnector : ArduinoBase
             _soundDelay--;
         }
         if (_gameover && _soundDelay == 0) {
-            //Debug.Log(_digits);
             _stream.Write(GAMEOVER);
-            _stream.Close();
+            this.CloseStream();
         }
     }
 
@@ -71,7 +72,7 @@ public class ArduinoConnector : ArduinoBase
        
     }
 
-    private void OnApplicationQuit()
+    private void CloseStream()
     {
         if (_stream != null && _stream.IsOpen)
         {

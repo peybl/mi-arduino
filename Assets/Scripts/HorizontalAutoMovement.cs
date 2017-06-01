@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HorizontalAutoMovement : MonoBehaviour
 {
-    public static readonly int SPEED = 4;
+    public static readonly int SPEED = 3;
 
     private void FixedUpdate() {
         float dist = SPEED * Time.fixedDeltaTime;
