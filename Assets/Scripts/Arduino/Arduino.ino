@@ -81,6 +81,7 @@ void loop()
       starttime = millis();
       gameover = false;
       resetDisplay();
+      score = 0;
     }
   }
 
