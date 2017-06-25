@@ -56,7 +56,7 @@ public class UIManager : SingletonBase<UIManager>
         brightnessImg.enabled = true;
         scoreText.enabled = true;
 
-        if (GameManager.Instance.Arduino.Brightness < OnBrightnessBase.BRIGHTNESS_SWITCH_VALUE)
+        if (GameManager.Instance.Arduino.Brightness < GameManager.Instance.Arduino.EnvironmentLight)
             brightnessImg.color = Color.white;
         else
             brightnessImg.color = Color.black;

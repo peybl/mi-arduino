@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class OnBrightnessBase : MonoBehaviour
 {
-    public static readonly int BRIGHTNESS_SWITCH_VALUE = 300;
 
     public enum TYPE { DISABLE_WHEN_BRIGHT, DISABLE_WHEN_DARK };
 
@@ -19,11 +18,11 @@ public abstract class OnBrightnessBase : MonoBehaviour
         switch (type)
         {
             case TYPE.DISABLE_WHEN_BRIGHT:
-                if (brightness >= BRIGHTNESS_SWITCH_VALUE)
+                if (brightness >= GameManager.Instance.Arduino.EnvironmentLight)
                     isEnabled = true;
                 break;
             case TYPE.DISABLE_WHEN_DARK:
-                if (brightness < BRIGHTNESS_SWITCH_VALUE)
+                if (brightness < GameManager.Instance.Arduino.EnvironmentLight)
                     isEnabled = true;
                 break;
         }

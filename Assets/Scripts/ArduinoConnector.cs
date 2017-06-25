@@ -11,8 +11,10 @@ public class ArduinoConnector : ArduinoBase
     private SerialCommunication serialCommunication;
 
     private int _soundDelay = 0;
+    
 
-    private void Start()
+
+    void Start()
     {
         serialCommunication = new SerialCommunication();
         serialCommunication.SendCommand(RESTART);

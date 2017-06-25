@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AdjustBackground : MonoBehaviour
-{
+public class AdjustOutfit : MonoBehaviour {
 
-    private Material day;
-    private Material night;
-    private MeshRenderer meshRenderer;
+    private Sprite day;
+    private Sprite night;
 
     private enum STATUS { DAY, NIGHT };
     private STATUS currentStatus;
 
+    private SpriteRenderer spriteRenderer;
 
-
-    // Use this for initialization
-    void Start () {
-        day = Resources.Load("Materials/day", typeof(Material)) as Material;
-        night = Resources.Load("Materials/night", typeof(Material)) as Material;
-        meshRenderer = this.GetComponent<MeshRenderer>();
-        currentStatus = STATUS.DAY;
+	// Use this for initialization
+	void Start () {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        day = Resources.Load("Sprites/nyancat_day", typeof(Sprite)) as Sprite;
+        night = Resources.Load("Sprites/nyancat_night", typeof(Sprite)) as Sprite;
     }
 	
 	// Update is called once per frame
@@ -28,14 +25,14 @@ public class AdjustBackground : MonoBehaviour
         //night
         if (GameManager.Instance.Arduino.Brightness >= GameManager.Instance.Arduino.EnvironmentLight && currentStatus == STATUS.DAY)
         {
-            meshRenderer.material = night;
+            spriteRenderer.sprite = night;
             currentStatus = STATUS.NIGHT;
         }
         //day
         if (GameManager.Instance.Arduino.Brightness < GameManager.Instance.Arduino.EnvironmentLight && currentStatus == STATUS.NIGHT)
         {
-            meshRenderer.material = day;
+            spriteRenderer.sprite = day;
             currentStatus = STATUS.DAY;
         }
-	}
+    }
 }

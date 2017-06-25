@@ -13,6 +13,9 @@ public abstract class ArduinoBase : MonoBehaviour
     protected int _digits = 0;
     public int Digits { set { _digits = value; } }
 
+    protected int _environmentLight = 300;
+    public int EnvironmentLight { get { return _environmentLight; } }
+
     protected bool _gameover = false;
 
     public abstract void PlaySound();
