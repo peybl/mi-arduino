@@ -11,7 +11,7 @@ public class SerialCommunication
 
     public string LatestLine { get; set; }
 
-    private bool _runThread = true;
+    private bool _runThread=false;
 
     public SerialCommunication()
     {
@@ -22,11 +22,12 @@ public class SerialCommunication
         }
         catch (System.IO.IOException e)
         {
-            Debug.LogError("Could not establish connection with arduino, please try again.");
+            Debug.LogError("<b>Arduino:</b> Connection couldn't, please try again.");
             this.Stop();
-            Application.Quit();
         }
+        Debug.Log("<b>Arduino:</b> Connection established.");
         LatestLine = "";
+        _runThread = true;
 
         Thread pollingThread = new Thread(RunPollingThread) { IsBackground = true };
         pollingThread.Start();
@@ -34,15 +35,30 @@ public class SerialCommunication
 
     public void Stop()
     {
-        _runThread = false;
+        //closing the communication thread
+        if (_runThread) { 
+            _runThread = false;
+            Debug.Log("<b>Arduino:</b> Communication-Thread closed.");
+        }
+        //closing the port
         if (_port.IsOpen)
         {
             _port.Close();
+            Debug.Log("<b>Arduino:</b> Connection closed.");
         }
+        
+        #if UNITY_EDITOR
+            // Application.Quit() does not work in the editor so
+            // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
     }
 
     private void RunPollingThread()
     {
+        Debug.Log("<b>Arduino:</b> Communication-Thread started.");
         while (_runThread)
         {
             PollArduino();
@@ -56,7 +72,6 @@ public class SerialCommunication
         {
             return;
         }
-        
         LatestLine = _port.ReadLine();
      }
 

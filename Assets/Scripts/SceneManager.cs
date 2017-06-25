@@ -52,6 +52,7 @@ public class SceneManager : SingletonBase<SceneManager>
 
         // Create player object
         SceneManager.Instance.SpawnPlayer();
+        Debug.Log("<b>SceneManager:</b> Process running.");
     }
 
     private void OnDestroy()

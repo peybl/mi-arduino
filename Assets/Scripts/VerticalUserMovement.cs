@@ -8,12 +8,10 @@ public class VerticalUserMovement : MonoBehaviour
     public static readonly int DISTANCE_MAX = 20;   // Bottom position
 
     private float[] yPosition;
-    private int lastPosition;
 
     private void Start()
     {
         yPosition = new float[5];
-        lastPosition = 0;
     }
     
 	private void FixedUpdate()

@@ -23,6 +23,7 @@ public class GameManager : SingletonBase<GameManager>
         // Init ui
         UIManager.Instance.DebugMode = DEBUG_MODE;
         UIManager.Instance.PlayGameStartsAnimation(StartGame);
+        Debug.Log("<b>GameManager:</b> Process running.");
     }
 
     public void SetScreenProperties()
