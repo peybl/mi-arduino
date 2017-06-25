@@ -12,10 +12,6 @@ public class ArduinoConnector : ArduinoBase
 
     private int _soundDelay = 0;
 
-    private void Awake()
-    {
-
-    }
     private void Start()
     {
         serialCommunication = new SerialCommunication();

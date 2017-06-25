@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SceneManager : SingletonBase<SceneManager>
 {
-    public static readonly float PLAYER_POS_X = .1f; // Percentage from left screen edge
+    public static readonly float PLAYER_POS_X = .25f; // Percentage from left screen edge
     public static readonly float OBSTRACLE_POS_X = 1f; // Percentage from left screen edge
     public static readonly float OBSTRACLE_SPAWN_RATE = 2f;    // in seconds
     public static readonly float OBSTRACLE_BRIGHT_PROBABILITY = 0.6f; // percentage
