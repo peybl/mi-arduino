@@ -16,7 +16,16 @@ public class SerialCommunication
     public SerialCommunication()
     {
         _port = new SerialPort(PORT, 9600);
-        _port.Open();
+        try
+        {
+            _port.Open();
+        }
+        catch (System.IO.IOException e)
+        {
+            Debug.LogError("Could not establish connection with arduino, please try again.");
+            this.Stop();
+            Application.Quit();
+        }
         LatestLine = "";
 
         Thread pollingThread = new Thread(RunPollingThread) { IsBackground = true };
@@ -47,7 +56,7 @@ public class SerialCommunication
         {
             return;
         }
-
+        
         LatestLine = _port.ReadLine();
      }
 
@@ -55,7 +64,6 @@ public class SerialCommunication
     {
         if (_port.IsOpen)
         {
-            Debug.Log(Command);
             _port.Write(Command);
         }
     }
