@@ -4,7 +4,7 @@ using System.IO.Ports;
 
 public class ArduinoConnector : ArduinoBase
 {
-    public static readonly int SOUND_LENGTH = 20;
+    public static readonly int SOUND_LENGTH = 15;
     private static readonly String SOUND = "a";
     private static readonly String GAMEOVER = "b";
     private static readonly String RESTART = "c";
