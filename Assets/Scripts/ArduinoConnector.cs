@@ -8,35 +8,28 @@ public class ArduinoConnector : ArduinoBase
     private static readonly String SOUND = "a";
     private static readonly String GAMEOVER = "b";
     private static readonly String RESTART = "c";
+    private SerialCommunication serialCommunication;
 
-    private SerialPort _stream = new SerialPort("COM4", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices)
     private int _soundDelay = 0;
 
+    private void Awake()
+    {
 
+    }
     private void Start()
     {
-        try
-        {
-            OpenStream();
-            _stream.Write(RESTART);
-        } catch(System.IO.IOException)
-        {
-            Debug.LogError("Could not open arduino-stream.");
-        }
-        _stream.ReadTimeout = 300;
-        _stream.WriteLine(RESTART);
+        serialCommunication = new SerialCommunication();
+        serialCommunication.SendCommand(RESTART);
     }
 
     private void Update()
     {
-        if (!_stream.IsOpen)
-            return;
-
         /* Receiving */
-        string value = _stream.ReadLine(); //Read the information
+        string value = serialCommunication.LatestLine; //Read the information
+        
         //Debug.Log(value + "");
         string[] values = value.Split(' ');
-        
+
         if (values.Length == 2)//check if arguments are send right
         {
             if (Int32.TryParse(values[0], out _brightness))
@@ -54,30 +47,20 @@ public class ArduinoConnector : ArduinoBase
         /* Sending */
         if (_soundDelay > 0)
         {
-            _stream.Write(SOUND);
+            serialCommunication.SendCommand(SOUND);
             _soundDelay--;
         }
-        if (_gameover && _soundDelay == 0) {
-            _stream.Write(GAMEOVER);
+        if (_gameover && _soundDelay == 0)
+        {
+            serialCommunication.SendCommand(GAMEOVER);
             this.CloseStream();
         }
-    }
-
-    private void OpenStream()
-    {
-        if(_stream != null && !_stream.IsOpen)
-        {
-            _stream.Open(); //Open the Serial Stream.
-        }
-       
+    
     }
 
     private void CloseStream()
     {
-        if (_stream != null && _stream.IsOpen)
-        {
-            _stream.Close(); //Close the Serial Stream.
-        }
+        serialCommunication.Stop();
     }
 
     public override void PlaySound()
@@ -89,5 +72,11 @@ public class ArduinoConnector : ArduinoBase
     {
         _gameover = true;
         this.PlaySound();
+    }
+
+    void OnApplicationQuit()
+    {
+        serialCommunication.SendCommand(RESTART);
+        this.CloseStream();
     }
 }

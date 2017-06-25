@@ -80,8 +80,8 @@ void loop()
     {
       starttime = millis();
       gameover = false;
+      score = 7;
       resetDisplay();
-      score = 0;
     }
   }
 
@@ -146,8 +146,14 @@ void updateDisplay() {
 
 //resetting display when game starts
 void resetDisplay() {
-  digitScan = 3;
+  digitScan = 0;
   digitBuffer[0] = 0;
+  updateDisplay();
+  digitBuffer[1] = 0;
+  updateDisplay();
+  digitBuffer[2] = 0;
+  updateDisplay();
+  digitBuffer[3] = 0;
   updateDisplay();
 }
 
