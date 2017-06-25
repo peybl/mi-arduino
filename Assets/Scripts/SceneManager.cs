@@ -47,6 +47,8 @@ public class SceneManager : SingletonBase<SceneManager>
         _obstracleFolder.name = "Obstracles";
         _obstracleFolder.transform.SetParent(_rootFolder.transform);
 
+        //Set properties
+        GameManager.Instance.SetScreenProperties();
 
         // Create player object
         SceneManager.Instance.SpawnPlayer();

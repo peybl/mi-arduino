@@ -20,15 +20,18 @@ public class GameManager : SingletonBase<GameManager>
         //_arduino = gameObject.AddComponent<ArduinoMock>();
         _arduino = gameObject.AddComponent<ArduinoConnector>();
 
+        // Init ui
+        UIManager.Instance.DebugMode = DEBUG_MODE;
+        UIManager.Instance.PlayGameStartsAnimation(StartGame);
+    }
+
+    public void SetScreenProperties()
+    {
         // Get Screen values
         Vector2 topRightCorner = new Vector2(1, 1);
         Vector2 edgeVector = Camera.main.ViewportToWorldPoint(topRightCorner);  // center is at (0,0)
         _screenHeight = edgeVector.y * 2;
         _screenWidth = edgeVector.x * 2;
-
-        // Init ui
-        UIManager.Instance.DebugMode = DEBUG_MODE;
-        UIManager.Instance.PlayGameStartsAnimation(StartGame);
     }
 
     /// <summary>
