@@ -116,10 +116,16 @@ void loop()
 //makes a small buzzering sound, when game is over
 void playCrashSound()
 {
+   for (int i = 0; i < 100; i++)
+  {
+  tone(buzzerPin,250+(i*100),20);
+  }
+  /*
   digitalWrite(buzzerPin, HIGH);
   delay(1);//wait for 1ms
   digitalWrite(buzzerPin, LOW);
   delay(1);//wait for 1ms
+  */
 }
 
 //writes the score on display

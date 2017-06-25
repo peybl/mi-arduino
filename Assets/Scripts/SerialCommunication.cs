@@ -20,13 +20,13 @@ public class SerialCommunication
         {
             _port.Open();
         }
-        catch (System.IO.IOException e)
+        catch (System.IO.IOException)
         {
-            Debug.LogError("<b>Arduino:</b> Connection couldn't, please try again.");
+            Debug.LogError("<b>Arduino:</b> Connection couldn't be established, please try again.");
             this.Stop();
+            return;
         }
         Debug.Log("<b>Arduino:</b> Connection established.");
-        LatestLine = "";
         _runThread = true;
 
         Thread pollingThread = new Thread(RunPollingThread) { IsBackground = true };
@@ -85,6 +85,6 @@ public class SerialCommunication
 
     public bool hasMessage()
     {
-        return LatestLine.Length != 0;
+        return LatestLine != null && LatestLine.Length != 0;
     }
 }
