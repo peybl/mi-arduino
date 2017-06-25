@@ -16,8 +16,8 @@ public class AdjustBackground : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-        day = Resources.Load("Assets/Materials/day.mat", typeof(Material)) as Material;
-        night = Resources.Load("Assets/Materials/night.mat", typeof(Material)) as Material;
+        day = Resources.Load("Materials/day", typeof(Material)) as Material;
+        night = Resources.Load("Materials/night", typeof(Material)) as Material;
         meshRenderer = this.GetComponent<MeshRenderer>();
         currentStatus = STATUS.DAY;
     }
