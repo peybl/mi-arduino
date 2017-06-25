@@ -11,6 +11,13 @@ public class DisableLightOnBrightness : OnBrightnessBase
         if (_light == null)
             _light = gameObject.GetComponent<Light>();
 
-        _light.enabled = IsEnabled();
+        if (IsEnabled())
+        {
+            _light.intensity = 1.2f;
+        }
+        else
+        {
+            _light.intensity = 0.5f;
+        }
     }
 }
